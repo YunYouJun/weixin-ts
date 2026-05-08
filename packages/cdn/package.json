@@ -1,18 +1,25 @@
 {
-  "name": "pkg-placeholder",
+  "name": "@weixin-ts/cdn",
   "type": "module",
-  "version": "0.0.0",
-  "description": "_description_",
+  "version": "0.0.1",
+  "description": "WeChat CDN upload/download with AES-ECB encryption (cross-platform WebCrypto)",
   "author": "YunYouJun",
   "license": "MIT",
   "funding": "https://github.com/sponsors/YunYouJun",
-  "homepage": "https://github.com/YunYouJun/pkg-placeholder#readme",
+  "homepage": "https://github.com/YunYouJun/weixin-ts#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/YunYouJun/pkg-placeholder.git"
+    "url": "git+https://github.com/YunYouJun/weixin-ts.git",
+    "directory": "packages/cdn"
   },
-  "bugs": "https://github.com/YunYouJun/pkg-placeholder/issues",
-  "keywords": [],
+  "bugs": "https://github.com/YunYouJun/weixin-ts/issues",
+  "keywords": [
+    "weixin",
+    "wechat",
+    "cdn",
+    "aes-ecb",
+    "encryption"
+  ],
   "sideEffects": false,
   "exports": {
     ".": "./dist/index.mjs"
@@ -23,6 +30,9 @@
   "files": [
     "dist"
   ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
     "build": "unbuild",
     "dev": "unbuild --stub",

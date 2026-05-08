@@ -95,12 +95,13 @@ API documentation is generated with TypeDoc. Configuration is in `typedoc.json`:
 ```json
 {
   "$schema": "https://typedoc.org/schema.json",
-  "docsRoot": "./docs",
-  "entryPoints": ["./packages/pkg-placeholder/src/index.ts"],
+  "entryPoints": ["./packages/bot/src/index.ts", "./packages/cdn/src/index.ts"],
   "out": "./docs/api",
-  "categorizeByGroup": true,
   "plugin": ["typedoc-plugin-markdown", "typedoc-vitepress-theme"],
-  "sourceLinkTemplate": "https://github.com/YunYouJun/starter-monorepo/tree/{gitRevision}/{path}#L{line}",
+  "readme": "none",
+  "docsRoot": "docs",
+  "gitRevision": "main",
+  "sourceLinkTemplate": "https://github.com/YunYouJun/weixin-ts/tree/{gitRevision}/{path}#L{line}",
   "sidebar": {
     "autoConfiguration": true,
     "format": "vitepress",
@@ -117,7 +118,8 @@ To add more packages to API documentation, update `typedoc.json`:
 ```json
 {
   "entryPoints": [
-    "./packages/pkg-placeholder/src/index.ts",
+    "./packages/bot/src/index.ts",
+    "./packages/cdn/src/index.ts",
     "./packages/another-package/src/index.ts"
   ]
 }

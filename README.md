@@ -1,48 +1,78 @@
-# starter-monorepo
+# weixin-ts
 
 [![npm version][npm-version-src]][npm-version-href]
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
-[![bundle][bundle-src]][bundle-href]
-[![JSDocs][jsdocs-src]][jsdocs-href]
 [![License][license-src]][license-href]
 
-TypeScript Monorepo Starter with VitePress Documentation
+Cross-platform, type-safe, zero-dependency WeChat Bot SDK for TypeScript.
 
-## 📚 Documentation
+跨平台、类型安全、零依赖的微信 Bot TypeScript SDK。
 
-Online documentation: https://starter-monorepo.pages.dev/
+## 📚 Documentation | 文档
 
-## ✨ Features
+- English: https://weixin-ts.yunyoujun.cn
+- 中文: https://weixin-ts.yunyoujun.cn/zh/
+- Mirror: https://weixin-ts.pages.dev
 
-- 📦 Monorepo architecture with pnpm workspaces
-- 🚀 Fast build with unbuild
-- 📝 Full TypeScript support
-- ✅ Vitest testing framework
-- 📚 Auto-generated API docs (TypeDoc + VitePress)
-- 🔧 ESLint + Git hooks for code quality
-- 🎨 Modern documentation site
+## ✨ Features | 特性
 
-## 📦 Installation
+- 🤖 **Bot SDK** — Event-driven bot with long-polling, message send/receive, typing indicators
+- 🌍 **Cross-Platform** — Node.js, Bun, Deno, Browser (Web standard APIs only)
+- 📱 **QR Login** — Built-in scan-to-login flow, no pre-existing token needed
+- 🔒 **CDN Encryption** — AES-128-ECB media upload/download via WebCrypto
+- 📝 **TypeScript First** — Full type safety with typed events and auto-generated API docs
+- 🪶 **Zero Dependencies** — No runtime deps, pure Web APIs, tree-shakeable ESM
+
+## 📦 Packages
+
+| Package | Version | Description |
+|---------|---------|-------------|
+| [`@weixin-ts/bot`](./packages/bot) | [![bot version](https://img.shields.io/npm/v/@weixin-ts/bot?style=flat&colorA=080f12&colorB=07C160)](https://npmjs.com/package/@weixin-ts/bot) | Core Bot SDK — polling, messaging, events, login |
+| [`@weixin-ts/cdn`](./packages/cdn) | [![cdn version](https://img.shields.io/npm/v/@weixin-ts/cdn?style=flat&colorA=080f12&colorB=07C160)](https://npmjs.com/package/@weixin-ts/cdn) | CDN upload/download with AES-ECB encryption |
+
+## 🚀 Quick Start | 快速开始
 
 ```bash
-pnpm add pkg-placeholder
+pnpm add @weixin-ts/bot
 ```
-
-## 🚀 Quick Start
 
 ```typescript
-import { one, two } from 'pkg-placeholder'
+import { MessageItemType, WeixinBot } from '@weixin-ts/bot'
 
-console.log(one, two) // 1 2
+const bot = new WeixinBot({ session: '.weixin-bot.session.json' })
+
+// QR scan login (or load saved session)
+const result = await bot.login({
+  onQrCode: url => console.log('Scan:', url),
+  onScanned: () => console.log('Confirm in WeChat...'),
+})
+if (!result.success)
+  throw new Error(result.message)
+
+// Echo bot
+bot.on('message', async (msg) => {
+  const text = msg.item_list?.find(i => i.type === MessageItemType.TEXT)?.text_item?.text
+  if (text)
+    await bot.sendText({ to: msg.from_user_id!, text: `Echo: ${text}` })
+})
+
+await bot.start()
 ```
 
-## 📖 More
+## 🌍 Platform Support
 
-For detailed documentation, visit: https://starter-monorepo.pages.dev
+| Platform | Status |
+|----------|--------|
+| Node.js ≥18 | ✅ Full |
+| Bun | ✅ Full |
+| Deno | ✅ Full |
+| Browser | ⚠️ Partial (no long-poll) |
 
-## Modify
+## 📁 Examples
 
-- [ ] replace `pkg-placeholder` `starter-monorepo` in repo
+- [`examples/basic`](./examples/basic) — Minimal echo bot with QR login
+- [`examples/commands`](./examples/commands) — Command-based bot (`/help`, `/ping`, `/echo`, `/id`)
+- [`examples/media`](./examples/media) — Media bot with `sendFile()` and `sendImage()`
 
 ## [Sponsors](https://www.yunyoujun.cn/sponsors/)
 
@@ -58,13 +88,9 @@ For detailed documentation, visit: https://starter-monorepo.pages.dev
 
 <!-- Badges -->
 
-[npm-version-src]: https://img.shields.io/npm/v/pkg-placeholder?style=flat&colorA=080f12&colorB=1fa669
-[npm-version-href]: https://npmjs.com/package/pkg-placeholder
-[npm-downloads-src]: https://img.shields.io/npm/dm/pkg-placeholder?style=flat&colorA=080f12&colorB=1fa669
-[npm-downloads-href]: https://npmjs.com/package/pkg-placeholder
-[bundle-src]: https://img.shields.io/bundlephobia/minzip/pkg-placeholder?style=flat&colorA=080f12&colorB=1fa669&label=minzip
-[bundle-href]: https://bundlephobia.com/result?p=pkg-placeholder
-[license-src]: https://img.shields.io/github/license/YunYouJun/pkg-placeholder.svg?style=flat&colorA=080f12&colorB=1fa669
-[license-href]: https://github.com/YunYouJun/pkg-placeholder/blob/main/LICENSE
-[jsdocs-src]: https://img.shields.io/badge/jsdocs-reference-080f12?style=flat&colorA=080f12&colorB=1fa669
-[jsdocs-href]: https://www.jsdocs.io/package/pkg-placeholder
+[npm-version-src]: https://img.shields.io/npm/v/@weixin-ts/bot?style=flat&colorA=080f12&colorB=07C160
+[npm-version-href]: https://npmjs.com/package/@weixin-ts/bot
+[npm-downloads-src]: https://img.shields.io/npm/dm/@weixin-ts/bot?style=flat&colorA=080f12&colorB=07C160
+[npm-downloads-href]: https://npmjs.com/package/@weixin-ts/bot
+[license-src]: https://img.shields.io/github/license/YunYouJun/weixin-ts.svg?style=flat&colorA=080f12&colorB=07C160
+[license-href]: https://github.com/YunYouJun/weixin-ts/blob/main/LICENSE

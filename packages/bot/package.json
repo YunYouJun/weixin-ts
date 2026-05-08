@@ -1,0 +1,45 @@
+{
+  "name": "@weixin-ts/bot",
+  "type": "module",
+  "version": "0.0.1",
+  "description": "Framework-agnostic WeChat bot SDK for Node.js, Deno, Bun, and browsers",
+  "author": "YunYouJun",
+  "license": "MIT",
+  "funding": "https://github.com/sponsors/YunYouJun",
+  "homepage": "https://github.com/YunYouJun/weixin-ts#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YunYouJun/weixin-ts.git",
+    "directory": "packages/bot"
+  },
+  "bugs": "https://github.com/YunYouJun/weixin-ts/issues",
+  "keywords": [
+    "weixin",
+    "wechat",
+    "bot",
+    "sdk",
+    "typescript"
+  ],
+  "sideEffects": false,
+  "exports": {
+    ".": "./dist/index.mjs"
+  },
+  "main": "./dist/index.mjs",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "unbuild",
+    "dev": "unbuild --stub",
+    "prepublishOnly": "nr build",
+    "start": "tsx src/index.ts"
+  },
+  "dependencies": {
+    "@weixin-ts/cdn": "workspace:*"
+  }
+}

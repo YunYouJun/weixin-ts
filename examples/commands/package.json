@@ -1,0 +1,19 @@
+{
+  "name": "@weixin-ts/example-commands",
+  "type": "module",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Command-based WeChat bot example",
+  "scripts": {
+    "start": "tsx src/index.ts",
+    "dev": "tsx watch src/index.ts"
+  },
+  "dependencies": {
+    "@weixin-ts/bot": "workspace:*",
+    "consola": "catalog:",
+    "qrcode-terminal": "catalog:"
+  },
+  "devDependencies": {
+    "tsx": "catalog:"
+  }
+}

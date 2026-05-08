@@ -11,3 +11,23 @@ node_modules
 temp
 cache
 .eslintcache
+
+# Bot session credentials (contains token, never commit)
+*.session.json
+.weixin-bot.session.json
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# VitePress build output
+docs/.vitepress/dist
+docs/.vitepress/cache
+
+# TypeDoc generated API docs (rebuilt on deploy)
+docs/api
+
+# OS files
+Thumbs.db
+Desktop.ini

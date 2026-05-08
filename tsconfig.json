@@ -5,7 +5,8 @@
     "module": "ESNext",
     "moduleResolution": "Bundler",
     "paths": {
-      "pkg-placeholder": ["./packages/pkg-placeholder/src/index.ts"]
+      "@weixin-ts/bot": ["./packages/bot/src/index.ts"],
+      "@weixin-ts/cdn": ["./packages/cdn/src/index.ts"]
     },
     "resolveJsonModule": true,
     "strict": true,

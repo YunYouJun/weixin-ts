@@ -1,56 +1,69 @@
-# What is starter-monorepo?
+# What is weixin-ts?
 
-starter-monorepo is a modern TypeScript monorepo starter template designed for building and managing multiple packages efficiently.
+weixin-ts is a framework-agnostic WeChat Bot SDK for TypeScript, designed for building WeChat bots that run anywhere — Node.js, Deno, Bun, and browsers.
 
 ## Features
 
-### 📦 Monorepo Management
+### 🤖 Bot SDK (`@weixin-ts/bot`)
 
-Built on pnpm workspaces, allowing you to manage multiple packages in a single repository with shared dependencies.
+High-level event-driven bot client:
+- Long-poll message receiving
+- Text, image, video, and file sending
+- Typing indicators
+- Automatic context token management
 
-### 🚀 Fast Development
+### 🔒 CDN Encryption (`@weixin-ts/cdn`)
 
-- **unbuild** - Fast build tool for TypeScript libraries
-- **Vite** - Next-generation frontend tooling
-- **Hot Module Replacement** - Instant feedback during development
+Cross-platform WeChat CDN operations:
+- AES-128-ECB encryption/decryption via WebCrypto
+- Full upload pipeline (hash → encrypt → CDN)
+- Download and decrypt media files
+
+### 🌍 Cross-Platform
+
+Built on Web standard APIs only:
+- `fetch` for HTTP
+- `crypto.subtle` for encryption
+- No `node:` dependencies in core
 
 ### 📝 TypeScript First
 
-Full TypeScript support with:
-- Strict type checking
-- Type generation
-- IntelliSense support
+Full type safety with:
+- Typed event emitter (`bot.on('message', msg => ...)`)
+- Protocol types for all API messages
+- TypeDoc-generated API reference
 
-### ✅ Testing & Quality
+### 📦 Zero Dependencies
 
-- **Vitest** - Fast unit testing framework
-- **ESLint** - Code linting with @antfu/eslint-config
-- **Git Hooks** - Pre-commit checks with simple-git-hooks
+No runtime dependencies — only Web APIs used:
+- `fetch`, `crypto.subtle`, `TextEncoder`
+- Works in Node.js 18+, Deno, Bun, modern browsers
 
-### 📚 Documentation
+## Packages
 
-- **VitePress** - Modern static site generator
-- **TypeDoc** - Automatic API documentation from source code
-- **Live Preview** - Real-time documentation development
+| Package | Description |
+|---------|-------------|
+| `@weixin-ts/bot` | Core bot SDK (polling, messaging, events) |
+| `@weixin-ts/cdn` | CDN upload/download with AES-ECB encryption |
 
-## Use Cases
+## Quick Example
 
-- Building component libraries
-- Creating utility packages
-- Developing design systems
-- Managing shared configurations
+```ts
+import { WeixinBot } from '@weixin-ts/bot'
 
-## Why Monorepo?
+const bot = new WeixinBot({ token: 'YOUR_TOKEN' })
 
-Monorepo architecture offers several advantages:
+bot.on('message', (msg) => {
+  const text = msg.item_list?.find(i => i.type === 1)?.text_item?.text
+  if (text)
+    bot.sendText({ to: msg.from_user_id!, text: `Echo: ${text}` })
+})
 
-1. **Code Sharing** - Easy to share code between packages
-2. **Atomic Changes** - Change multiple packages in a single commit
-3. **Unified Tooling** - Single configuration for all packages
-4. **Better Dependency Management** - Avoid version conflicts
+await bot.start()
+```
 
 ## Next Steps
 
-- [Getting Started](/guide/getting-started) - Set up your first project
-- [Configuration](/guide/configuration) - Customize your setup
-- [API Reference](/api/) - Explore the API documentation
+- [Getting Started](/guide/getting-started) — Install and set up
+- [Configuration](/guide/configuration) — Customize behavior
+- [API Reference](/api/) — Full API documentation

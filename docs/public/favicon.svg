@@ -1,5 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <circle cx="16" cy="16" r="14" fill="#646cff"/>
-  <path d="M16 8l4 8h-8z" fill="white"/>
-  <path d="M16 24l-4-8h8z" fill="white"/>
+  <!-- WeChat green background circle -->
+  <circle cx="16" cy="16" r="15" fill="#07C160"/>
+  <!-- Bot chat bubble shape -->
+  <path d="M8 12c0-3.3 3.6-6 8-6s8 2.7 8 6-3.6 6-8 6c-1.1 0-2.2-.2-3.1-.4L10 19l1.2-2.4C9.3 15.4 8 13.8 8 12z" fill="white"/>
+  <!-- Bot eyes -->
+  <circle cx="13" cy="11.5" r="1.2" fill="#07C160"/>
+  <circle cx="19" cy="11.5" r="1.2" fill="#07C160"/>
+  <!-- TypeScript "TS" hint -->
+  <text x="16" y="27" font-family="system-ui,sans-serif" font-size="6" font-weight="bold" fill="white" text-anchor="middle">TS</text>
 </svg>

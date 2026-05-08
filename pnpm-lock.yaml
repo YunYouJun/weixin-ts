@@ -36,6 +36,9 @@ catalogs:
     bumpp:
       specifier: ^11.1.0
       version: 11.1.0
+    consola:
+      specifier: ^3.4.2
+      version: 3.4.2
     eslint:
       specifier: ^10.3.0
       version: 10.3.0
@@ -51,6 +54,9 @@ catalogs:
     pnpm:
       specifier: ^10.33.4
       version: 10.33.4
+    qrcode-terminal:
+      specifier: ^0.12.0
+      version: 0.12.0
     simple-git-hooks:
       specifier: ^2.13.1
       version: 2.13.1
@@ -116,6 +122,12 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 25.6.2
+      '@weixin-ts/bot':
+        specifier: workspace:*
+        version: link:packages/bot
+      '@weixin-ts/cdn':
+        specifier: workspace:*
+        version: link:packages/cdn
       bumpp:
         specifier: 'catalog:'
         version: 11.1.0
@@ -125,9 +137,6 @@ importers:
       lint-staged:
         specifier: 'catalog:'
         version: 17.0.2
-      pkg-placeholder:
-        specifier: workspace:*
-        version: link:packages/pkg-placeholder
       pnpm:
         specifier: 'catalog:'
         version: 10.33.4
@@ -204,7 +213,61 @@ importers:
         specifier: 'catalog:'
         version: 3.5.34(typescript@5.9.3)
 
-  packages/pkg-placeholder: {}
+  examples/basic:
+    dependencies:
+      '@weixin-ts/bot':
+        specifier: workspace:*
+        version: link:../../packages/bot
+      consola:
+        specifier: 'catalog:'
+        version: 3.4.2
+      qrcode-terminal:
+        specifier: 'catalog:'
+        version: 0.12.0
+    devDependencies:
+      tsx:
+        specifier: 'catalog:'
+        version: 4.21.0
+
+  examples/commands:
+    dependencies:
+      '@weixin-ts/bot':
+        specifier: workspace:*
+        version: link:../../packages/bot
+      consola:
+        specifier: 'catalog:'
+        version: 3.4.2
+      qrcode-terminal:
+        specifier: 'catalog:'
+        version: 0.12.0
+    devDependencies:
+      tsx:
+        specifier: 'catalog:'
+        version: 4.21.0
+
+  examples/media:
+    dependencies:
+      '@weixin-ts/bot':
+        specifier: workspace:*
+        version: link:../../packages/bot
+      consola:
+        specifier: 'catalog:'
+        version: 3.4.2
+      qrcode-terminal:
+        specifier: 'catalog:'
+        version: 0.12.0
+    devDependencies:
+      tsx:
+        specifier: 'catalog:'
+        version: 4.21.0
+
+  packages/bot:
+    dependencies:
+      '@weixin-ts/cdn':
+        specifier: workspace:*
+        version: link:../cdn
+
+  packages/cdn: {}
 
 packages:
 
@@ -1495,12 +1558,6 @@ packages:
 
   '@typescript-eslint/tsconfig-utils@8.56.1':
     resolution: {integrity: sha512-qOtCYzKEeyr3aR9f28mPJqBty7+DBqsdd63eO0yyDwc6vgThj2UjWfJIcsFeSucYydqcuudMOprZ+x1SpF3ZuQ==}
-    engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
-    peerDependencies:
-      typescript: '>=4.8.4 <6.0.0'
-
-  '@typescript-eslint/tsconfig-utils@8.57.1':
-    resolution: {integrity: sha512-0lgOZB8cl19fHO4eI46YUx2EceQqhgkPSuCGLlGi79L2jwYY1cxeYc1Nae8Aw1xjgW3PKVDLlr3YJ6Bxx8HkWg==}
     engines: {node: ^18.18.0 || ^20.9.0 || >=21.1.0}
     peerDependencies:
       typescript: '>=4.8.4 <6.0.0'
@@ -3503,6 +3560,10 @@ packages:
     resolution: {integrity: sha512-vYt7UD1U9Wg6138shLtLOvdAu+8DsC/ilFtEVHcH+wydcSpNE20AfSOduf6MkRFahL5FY7X1oU7nKVZFtfq8Fg==}
     engines: {node: '>=6'}
 
+  qrcode-terminal@0.12.0:
+    resolution: {integrity: sha512-EXtzRZmC+YGmGlDFbXKxQiMZNwCLEO6BANKXG4iCtSIM0yqc/pappSx3RIKr4r0uh5JsBckOXeKrB3Iz7mdQpQ==}
+    hasBin: true
+
   quansync@0.2.11:
     resolution: {integrity: sha512-AifT7QEbW9Nri4tAwR5M/uzpBuqfZf+zwaEM/QkzEjj7NBuFD2rBuy0K3dE+8wltbezDV7JMA0WfnCPYRSYbXA==}
 
@@ -3766,12 +3827,6 @@ packages:
 
   trim-lines@3.0.1:
     resolution: {integrity: sha512-kRj8B+YHZCc9kQYdWfJB2/oUl9rA99qbowYYBtr4ui4mZyAQ2JpvVBd/6U2YloATfqBhBTSMhTpgBHtU0Mf3Rg==}
-
-  ts-api-utils@2.4.0:
-    resolution: {integrity: sha512-3TaVTaAv2gTiMB35i3FiGJaRfwb3Pyn/j3m/bfAvGe8FB7CF6u+LMYqYlDh7reQf7UNvoTvdfAqHGmPGOSsPmA==}
-    engines: {node: '>=18.12'}
-    peerDependencies:
-      typescript: '>=4.8.4'
 
   ts-api-utils@2.5.0:
     resolution: {integrity: sha512-OJ/ibxhPlqrMM0UiNHJ/0CKQkoKF243/AEmplt3qpRgkW8VG7IfOS41h7V8TjITqdByHzrjcS/2si+y4lIh8NA==}
@@ -5288,8 +5343,8 @@ snapshots:
 
   '@typescript-eslint/project-service@8.56.1(typescript@5.9.3)':
     dependencies:
-      '@typescript-eslint/tsconfig-utils': 8.57.1(typescript@5.9.3)
-      '@typescript-eslint/types': 8.57.1
+      '@typescript-eslint/tsconfig-utils': 8.59.2(typescript@5.9.3)
+      '@typescript-eslint/types': 8.59.2
       debug: 4.4.3
       typescript: 5.9.3
     transitivePeerDependencies:
@@ -5332,10 +5387,6 @@ snapshots:
     dependencies:
       typescript: 5.9.3
 
-  '@typescript-eslint/tsconfig-utils@8.57.1(typescript@5.9.3)':
-    dependencies:
-      typescript: 5.9.3
-
   '@typescript-eslint/tsconfig-utils@8.59.2(typescript@5.9.3)':
     dependencies:
       typescript: 5.9.3
@@ -5368,7 +5419,7 @@ snapshots:
       minimatch: 10.2.5
       semver: 7.7.4
       tinyglobby: 0.2.16
-      ts-api-utils: 2.4.0(typescript@5.9.3)
+      ts-api-utils: 2.5.0(typescript@5.9.3)
       typescript: 5.9.3
     transitivePeerDependencies:
       - supports-color
@@ -7711,6 +7762,8 @@ snapshots:
 
   punycode@2.3.1: {}
 
+  qrcode-terminal@0.12.0: {}
+
   quansync@0.2.11: {}
 
   quansync@1.0.0: {}
@@ -7988,10 +8041,6 @@ snapshots:
   totalist@3.0.1: {}
 
   trim-lines@3.0.1: {}
-
-  ts-api-utils@2.4.0(typescript@5.9.3):
-    dependencies:
-      typescript: 5.9.3
 
   ts-api-utils@2.5.0(typescript@5.9.3):
     dependencies:

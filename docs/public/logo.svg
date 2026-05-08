@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <circle cx="16" cy="16" r="15" fill="#07C160"/>
+  <path d="M8 12c0-3.3 3.6-6 8-6s8 2.7 8 6-3.6 6-8 6c-1.1 0-2.2-.2-3.1-.4L10 19l1.2-2.4C9.3 15.4 8 13.8 8 12z" fill="white"/>
+  <circle cx="13" cy="11.5" r="1.2" fill="#07C160"/>
+  <circle cx="19" cy="11.5" r="1.2" fill="#07C160"/>
+  <text x="16" y="27" font-family="system-ui,sans-serif" font-size="6" font-weight="bold" fill="white" text-anchor="middle">TS</text>
+</svg>
