@@ -56,3 +56,18 @@ export async function saveSession(filePath: string, data: SessionData): Promise<
     // Silently skip if fs is unavailable (browser env)
   }
 }
+
+/**
+ * Delete session data from a file path.
+ * Returns true when a file was deleted, false when it didn't exist or couldn't be removed.
+ */
+export async function deleteSession(filePath: string): Promise<boolean> {
+  try {
+    const fs = await import('node:fs/promises')
+    await fs.unlink(filePath)
+    return true
+  }
+  catch {
+    return false
+  }
+}

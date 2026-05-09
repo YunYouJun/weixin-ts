@@ -42,7 +42,7 @@ import { getUpdates as getUpdatesApi } from './api/get-updates'
 import { sendMessage } from './api/send-message'
 import { sendTyping as sendTypingApi } from './api/send-typing'
 import { requestQRCode } from './auth/login'
-import { loadSession, saveSession } from './auth/session'
+import { deleteSession, loadSession, saveSession } from './auth/session'
 import { DEFAULT_BASE_URL, DEFAULT_CDN_BASE_URL } from './constants'
 import { TypedEventEmitter } from './events'
 import { Poller } from './polling/poller'
@@ -130,7 +130,9 @@ export class WeixinBot extends TypedEventEmitter<BotEventMap> {
       {
         onMessages: msgs => this.handleMessages(msgs),
         onError: err => this.emit('error', err),
-        onSessionExpired: () => this.emit('session:expired'),
+        onSessionExpired: () => {
+          void this.handleSessionExpired()
+        },
         onConnected: () => this.emit('connected'),
         onDisconnected: () => this.emit('disconnected'),
       },
@@ -477,6 +479,18 @@ export class WeixinBot extends TypedEventEmitter<BotEventMap> {
    */
   getContextToken(userId: string): string | undefined {
     return this.contextTokens.get(userId)
+  }
+
+  private async handleSessionExpired(): Promise<void> {
+    this._token = undefined
+    this.contextTokens.clear()
+    this.typingTickets.clear()
+
+    if (this.config.session) {
+      await deleteSession(this.config.session)
+    }
+
+    this.emit('session:expired')
   }
 
   private handleMessages(msgs: WeixinMessage[]): void {

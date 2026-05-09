@@ -31,7 +31,7 @@ export type {
   QRLoginOptions,
   QRPollCallbacks,
 } from './auth/login'
-export { loadSession, saveSession } from './auth/session'
+export { deleteSession, loadSession, saveSession } from './auth/session'
 export type { SessionData } from './auth/session'
 
 // Main class

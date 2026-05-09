@@ -275,6 +275,7 @@ export interface WeixinBotOptions {
    * Session file path for token persistence.
    * When set, token is automatically saved after login and loaded on next start.
    * Avoids repeated QR scanning across restarts.
+   * The file is automatically deleted when the server reports the session is expired.
    *
    * @example
    * ```ts
@@ -334,6 +335,6 @@ export interface BotEventMap {
   'disconnected': []
   /** Fired when a saved session is loaded */
   'session:loaded': [session: SessionData]
-  /** Fired on session expiry (errcode -14) */
+  /** Fired on session expiry after the persisted session file is deleted, if configured */
   'session:expired': []
 }

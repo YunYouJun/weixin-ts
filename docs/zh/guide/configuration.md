@@ -70,7 +70,7 @@ if (!result.success)
 | `error` | `Error` | 轮询出错（非致命，会自动重试） |
 | `connected` | — | 轮询已开始 |
 | `disconnected` | — | 轮询已停止 |
-| `session:expired` | — | Session 过期（errcode -14） |
+| `session:expired` | — | Session 过期（errcode -14）；配置 `session` 时会自动删除本地 session 文件 |
 
 ## 消息类型
 

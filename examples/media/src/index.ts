@@ -1,23 +1,16 @@
+import process from 'node:process'
+
 /**
  * 微信 Bot 媒体示例：发送文件与图片
  */
-import type { WeixinMessage } from '@weixin-ts/bot'
-import process from 'node:process'
-
-import { MessageItemType, TypingStatus, WeixinBot } from '@weixin-ts/bot'
+import { TypingStatus } from '@weixin-ts/bot'
 import { consola } from 'consola'
 import { colors } from 'consola/utils'
-// @ts-expect-error qrcode-terminal has no bundled types
-import qrcodeTerminal from 'qrcode-terminal'
 
-const token = process.env.WEIXIN_BOT_TOKEN?.trim()
-const baseUrl = process.env.WEIXIN_BASE_URL?.trim()
+import { createBot, getText, logBaseUrl, login, run, setupListeners } from '../../shared'
+
+const bot = createBot()
 const defaultImageUrl = process.env.WEIXIN_IMAGE_URL?.trim()
-
-const bot = new WeixinBot({
-  ...(token ? { token } : { session: '.weixin-bot.session.json' }),
-  ...(baseUrl ? { baseUrl } : {}),
-})
 
 const HELP_TEXT = [
   'Media commands:',
@@ -25,35 +18,6 @@ const HELP_TEXT = [
   '/file - Send a generated text file',
   '/image <url> - Download an image URL and send it back',
 ].join('\n')
-
-function getText(msg: WeixinMessage): string | undefined {
-  return msg.item_list?.find(i => i.type === MessageItemType.TEXT)?.text_item?.text?.trim()
-}
-
-async function login(): Promise<void> {
-  if (token) {
-    consola.success('已从 WEIXIN_BOT_TOKEN 加载 Token')
-    return
-  }
-
-  const result = await bot.login({
-    onQrCode: (url) => {
-      consola.success('登录二维码已生成')
-      qrcodeTerminal.generate(url, { small: true })
-      consola.info(`请用微信扫码: ${colors.underline(colors.cyan(url))}`)
-    },
-    onScanned: () => consola.info(colors.yellow('已扫码，请在微信中确认...')),
-    onQrRefresh: (url) => {
-      consola.info('二维码已刷新')
-      qrcodeTerminal.generate(url, { small: true })
-    },
-  })
-
-  if (!result.success)
-    throw new Error(result.message)
-
-  consola.success(`登录成功 ${colors.gray(`(${result.message})`)}`)
-}
 
 async function fetchBinary(url: string): Promise<Uint8Array> {
   const res = await fetch(url)
@@ -132,23 +96,12 @@ async function handleCommand(from: string, text: string): Promise<void> {
 
 async function main(): Promise<void> {
   consola.box(`${colors.bold('WeChat Bot — Media Demo')}\n${colors.gray('发送 /media-help 查看命令列表')}`)
-  if (baseUrl)
-    consola.info(`API Base URL: ${colors.cyan(baseUrl)}`)
+  logBaseUrl()
   if (defaultImageUrl)
     consola.info(`Default image URL: ${colors.cyan(defaultImageUrl)}`)
 
-  await login()
-
-  bot.on('connected', () => {
-    consola.ready(`正在监听媒体命令... ${colors.gray('(Ctrl+C 退出)')}\n`)
-  })
-
-  bot.on('error', err => consola.warn(err.message))
-
-  bot.on('session:expired', () => {
-    consola.error('Session 过期，请删除 .weixin-bot.session.json 后重新运行')
-    process.exit(1)
-  })
+  await login(bot)
+  setupListeners(bot)
 
   bot.on('message', async (msg) => {
     const from = msg.from_user_id
@@ -173,7 +126,4 @@ async function main(): Promise<void> {
   await bot.start()
 }
 
-main().catch((err: unknown): never => {
-  consola.error(err)
-  process.exit(1)
-})
+run(main)

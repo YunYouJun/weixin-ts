@@ -1,0 +1,6 @@
+# Bot session credentials
+*.session.json
+.weixin-bot.session.json
+
+# Environment variables (contains API keys)
+.env
