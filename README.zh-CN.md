@@ -8,6 +8,8 @@
 
 跨平台、类型安全、零依赖的微信 Bot TypeScript SDK。
 
+> 免责声明：本项目是面向微信 iLink Bot API 的非官方 SDK，与腾讯或微信没有从属、背书或官方支持关系。请自行承担使用风险，并确保遵守相关服务条款。
+
 ## 📚 文档
 
 - 英文: https://weixin-ts.yunyoujun.cn
@@ -15,6 +17,7 @@
 - API 文档: https://weixin-ts.yunyoujun.cn/api/
 - 示例: [examples](./examples)
 - 设计原则: https://weixin-ts.yunyoujun.cn/zh/guide/design-principles
+- 项目参考: [Tencent/openclaw-weixin](https://github.com/Tencent/openclaw-weixin)
 - 镜像: https://weixin-ts.pages.dev
 
 ## ✨ 特性
@@ -60,7 +63,7 @@ bot.on('message', async (msg) => {
     await bot.sendText({ to: msg.from_user_id!, text: `回声: ${text}` })
 })
 
-await bot.start()
+bot.start()
 ```
 
 ## 🌍 平台支持

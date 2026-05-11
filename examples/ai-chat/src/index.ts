@@ -129,7 +129,7 @@ async function main(): Promise<void> {
     }
   })
 
-  await bot.start()
+  bot.start()
 }
 
 run(main)

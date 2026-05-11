@@ -59,7 +59,7 @@ bot.on('message', (msg) => {
     bot.sendText({ to: msg.from_user_id!, text: `Echo: ${text}` })
 })
 
-await bot.start()
+bot.start()
 ```
 
 ## Next Steps

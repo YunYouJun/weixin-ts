@@ -2,30 +2,24 @@
 
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/zh-CN/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/).
+The format is based on [Keep a Changelog](https://keepachangelog.com/),
+and this project adheres to [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
-
-### Added
-
-- Initial monorepo setup with pnpm workspaces
-- VitePress documentation with TypeDoc integration
-- Example package `pkg-placeholder`
-- ESLint configuration with @antfu/eslint-config
-- Vitest for testing
-- Git hooks with simple-git-hooks and lint-staged
-- TypeScript configuration
-- Build configuration with unbuild
-
-### Changed
-
-### Fixed
-
-### Removed
-
-## [0.0.0] - 2025-01-03
+## [0.1.0] - 2026-05-11
 
 ### Added
 
-- Initial release
+- Initial public release of `weixin-ts`.
+- Added `@weixin-ts/bot`, a framework-agnostic WeChat Bot SDK for TypeScript.
+- Added QR-code login with optional session persistence via `@weixin-ts/bot/node`.
+- Added event-driven message polling with typed events and context token caching.
+- Added text, image, video, file, and typing indicator helpers.
+- Added low-level API exports for `getUpdates`, `sendMessage`, `sendTyping`, `getConfig`, and `getUploadUrl`.
+- Added `@weixin-ts/cdn` for AES-128-ECB media upload/download with WebCrypto.
+- Added runnable examples for basic echo, commands, media, and AI chat bots.
+- Added VitePress documentation and TypeDoc-generated API reference.
+- Added CI checks for linting, type checking, docs build, and multi-platform tests.
+
+### Notes
+
+- This project is an unofficial SDK and is not affiliated with or endorsed by Tencent or WeChat.

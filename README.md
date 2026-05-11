@@ -8,6 +8,8 @@
 
 Cross-platform, type-safe, zero-dependency WeChat Bot SDK for TypeScript.
 
+> Disclaimer: This project is an unofficial SDK for the WeChat iLink Bot API. It is not affiliated with, endorsed by, or supported by Tencent or WeChat. Use it at your own risk and ensure compliance with applicable terms of service.
+
 ## 📚 Documentation
 
 - English: https://weixin-ts.yunyoujun.cn
@@ -15,6 +17,7 @@ Cross-platform, type-safe, zero-dependency WeChat Bot SDK for TypeScript.
 - API Reference: https://weixin-ts.yunyoujun.cn/api/
 - Examples: [examples](./examples)
 - Design Principles: https://weixin-ts.yunyoujun.cn/guide/design-principles
+- Project Reference: [Tencent/openclaw-weixin](https://github.com/Tencent/openclaw-weixin)
 - Mirror: https://weixin-ts.pages.dev
 
 ## ✨ Features
@@ -60,7 +63,7 @@ bot.on('message', async (msg) => {
     await bot.sendText({ to: msg.from_user_id!, text: `Echo: ${text}` })
 })
 
-await bot.start()
+bot.start()
 ```
 
 ## 🌍 Platform Support

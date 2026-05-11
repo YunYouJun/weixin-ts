@@ -39,6 +39,8 @@ features:
 
 ## 快速开始
 
+> 免责声明：本项目是面向微信 iLink Bot API 的非官方 SDK，与腾讯或微信没有从属、背书或官方支持关系。
+
 [![npm version](https://img.shields.io/npm/v/@weixin-ts/bot?style=flat&colorA=080f12&colorB=07C160)](https://npmjs.com/package/@weixin-ts/bot)
 [![License](https://img.shields.io/github/license/YunYouJun/weixin-ts.svg?style=flat&colorA=080f12&colorB=07C160)](https://github.com/YunYouJun/weixin-ts/blob/main/LICENSE)
 
@@ -67,7 +69,7 @@ bot.on('message', async (msg) => {
     await bot.sendText({ to: msg.from_user_id!, text: `Echo: ${text}` })
 })
 
-await bot.start()
+bot.start()
 ```
 
 ## 包一览
@@ -76,3 +78,7 @@ await bot.start()
 |---|------|
 | [`@weixin-ts/bot`](/api/) | 核心 Bot SDK — 轮询、消息、事件、登录 |
 | [`@weixin-ts/cdn`](/api/) | CDN 上传/下载 + AES-ECB 加密 |
+
+## 项目参考
+
+- [Tencent/openclaw-weixin](https://github.com/Tencent/openclaw-weixin)

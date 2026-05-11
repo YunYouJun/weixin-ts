@@ -1,6 +1,6 @@
 {
   "type": "module",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "packageManager": "pnpm@10.33.4",
   "scripts": {
@@ -14,9 +14,10 @@
     "prepublishOnly": "nr build",
     "predocs": "typedoc",
     "docs:dev": "pnpm -C docs run docs:dev",
-    "docs:build": "pnpm predocs && pnpm -C docs run docs:build",
+    "docs:build": "pnpm build && pnpm predocs && pnpm -C docs run docs:build",
     "docs:preview": "pnpm -C docs run docs:preview",
-    "release": "bumpp -r && pnpm -r publish",
+    "bump": "bumpp -r",
+    "release": "pnpm bump",
     "test": "vitest",
     "typecheck": "tsc --noEmit",
     "prepare": "simple-git-hooks"

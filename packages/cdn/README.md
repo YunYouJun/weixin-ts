@@ -2,6 +2,8 @@
 
 WeChat CDN upload/download with AES-128-ECB encryption. Cross-platform using WebCrypto API.
 
+> Disclaimer: This project is an unofficial SDK for the WeChat iLink Bot API. It is not affiliated with, endorsed by, or supported by Tencent or WeChat. Use it at your own risk and ensure compliance with applicable terms of service.
+
 ## Features
 
 - **AES-128-ECB**: Encrypt/decrypt using WebCrypto (no `node:crypto` dependency)

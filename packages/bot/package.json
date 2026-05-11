@@ -1,12 +1,12 @@
 {
   "name": "@weixin-ts/bot",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Framework-agnostic WeChat bot SDK for Node.js, Deno, Bun, and browsers",
   "author": "YunYouJun",
   "license": "MIT",
   "funding": "https://github.com/sponsors/YunYouJun",
-  "homepage": "https://github.com/YunYouJun/weixin-ts#readme",
+  "homepage": "https://weixin-ts.yunyoujun.cn",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/YunYouJun/weixin-ts.git",
@@ -37,6 +37,9 @@
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "engines": {
     "node": ">=18.0.0"
   },

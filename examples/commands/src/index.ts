@@ -76,7 +76,7 @@ async function main(): Promise<void> {
     await handleCommand(from, text)
   })
 
-  await bot.start()
+  bot.start()
 }
 
 run(main)

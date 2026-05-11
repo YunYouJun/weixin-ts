@@ -2,6 +2,8 @@
 
 Framework-agnostic WeChat Bot SDK — cross-platform, type-safe, zero dependencies.
 
+> Disclaimer: This project is an unofficial SDK for the WeChat iLink Bot API. It is not affiliated with, endorsed by, or supported by Tencent or WeChat. Use it at your own risk and ensure compliance with applicable terms of service.
+
 ## Platform Support
 
 | Platform | Support | Notes |
@@ -53,7 +55,7 @@ bot.on('message', (msg) => {
 })
 
 bot.on('error', console.error)
-await bot.start()
+bot.start()
 ```
 
 ## Quick Start (with Token)
@@ -64,7 +66,7 @@ If you already have a bot token:
 const bot = new WeixinBot({ token: 'YOUR_BOT_TOKEN' })
 
 bot.on('message', (msg) => { /* ... */ })
-await bot.start()
+bot.start()
 ```
 
 ## API
@@ -74,7 +76,7 @@ await bot.start()
 ```ts
 const options: WeixinBotOptions | undefined = undefined
 const bot = new WeixinBot(options)
-await bot.start()
+bot.start()
 ```
 
 #### Options
@@ -127,7 +129,7 @@ bot.on('session:expired', () => {})
 #### Lifecycle
 
 ```ts
-await bot.start() // Start long-polling
+bot.start() // Start long-polling
 bot.stop() // Stop polling
 bot.isPolling // boolean
 ```

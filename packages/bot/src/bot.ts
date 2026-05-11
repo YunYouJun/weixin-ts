@@ -18,7 +18,7 @@
  *   console.error('Bot error:', err)
  * })
  *
- * await bot.start()
+ * bot.start()
  * ```
  *
  * @module

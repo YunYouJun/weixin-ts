@@ -39,6 +39,8 @@ features:
 
 ## Quick Start
 
+> Disclaimer: This project is an unofficial SDK for the WeChat iLink Bot API. It is not affiliated with, endorsed by, or supported by Tencent or WeChat.
+
 [![npm version](https://img.shields.io/npm/v/@weixin-ts/bot?style=flat&colorA=080f12&colorB=07C160)](https://npmjs.com/package/@weixin-ts/bot)
 [![License](https://img.shields.io/github/license/YunYouJun/weixin-ts.svg?style=flat&colorA=080f12&colorB=07C160)](https://github.com/YunYouJun/weixin-ts/blob/main/LICENSE)
 
@@ -67,7 +69,7 @@ bot.on('message', async (msg) => {
     await bot.sendText({ to: msg.from_user_id!, text: `Echo: ${text}` })
 })
 
-await bot.start()
+bot.start()
 ```
 
 ## Packages
@@ -76,3 +78,7 @@ await bot.start()
 |---------|-------------|
 | [`@weixin-ts/bot`](/api/) | Core bot SDK — polling, messaging, events, login |
 | [`@weixin-ts/cdn`](/api/) | CDN upload/download with AES-ECB encryption |
+
+## Project Reference
+
+- [Tencent/openclaw-weixin](https://github.com/Tencent/openclaw-weixin)

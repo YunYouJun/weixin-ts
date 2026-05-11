@@ -29,7 +29,7 @@ export const SESSION_EXPIRED_ERRCODE = -14
 export const SESSION_INVALID_ERRCODE = -13
 
 /** SDK version (for channel_version header) */
-export const SDK_VERSION = '0.0.1'
+export const SDK_VERSION = '0.1.0'
 
 /** Default iLink App ID */
 export const DEFAULT_APP_ID = 'bot'

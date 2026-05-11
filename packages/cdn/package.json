@@ -1,12 +1,12 @@
 {
   "name": "@weixin-ts/cdn",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "WeChat CDN upload/download with AES-ECB encryption (cross-platform WebCrypto)",
   "author": "YunYouJun",
   "license": "MIT",
   "funding": "https://github.com/sponsors/YunYouJun",
-  "homepage": "https://github.com/YunYouJun/weixin-ts#readme",
+  "homepage": "https://weixin-ts.yunyoujun.cn",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/YunYouJun/weixin-ts.git",
@@ -22,7 +22,10 @@
   ],
   "sideEffects": false,
   "exports": {
-    ".": "./dist/index.mjs"
+    ".": {
+      "types": "./dist/index.d.mts",
+      "import": "./dist/index.mjs"
+    }
   },
   "main": "./dist/index.mjs",
   "module": "./dist/index.mjs",
@@ -30,6 +33,9 @@
   "files": [
     "dist"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "engines": {
     "node": ">=18.0.0"
   },

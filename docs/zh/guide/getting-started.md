@@ -71,7 +71,7 @@ bot.on('message', async (msg) => {
 bot.on('error', console.error)
 
 // 3. 开始轮询
-await bot.start()
+bot.start()
 ```
 
 ## 使用已有 Token
@@ -84,7 +84,7 @@ import { WeixinBot } from '@weixin-ts/bot'
 const bot = new WeixinBot({ token: process.env.WEIXIN_BOT_TOKEN })
 
 bot.on('message', (msg) => { /* ... */ })
-await bot.start()
+bot.start()
 ```
 
 ## 登录流程原理

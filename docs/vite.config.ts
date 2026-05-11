@@ -12,6 +12,7 @@ export default defineConfig({
     ...(viteConfig.plugins || []),
 
     Tsconfig({
+      ignoreConfigErrors: true,
       projects: [
         fileURLToPath(new URL('../../tsconfig.json', import.meta.url)),
       ],
