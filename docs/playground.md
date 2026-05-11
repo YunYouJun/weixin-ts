@@ -22,9 +22,9 @@ Scan a QR code to start long polling, receive new messages, and reply from a bro
 
 <StackBlitzEmbed
   title="WeChat Echo Bot"
-  repo="YunYouJun/weixin-ts/tree/main/examples/basic"
-  file="src/index.ts"
-  start-script="start"
+  repo="YunYouJun/weixin-ts"
+  file="examples/basic/src/index.ts"
+  start-script="example"
   height="650px"
 />
 

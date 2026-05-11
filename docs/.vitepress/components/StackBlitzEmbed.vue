@@ -3,13 +3,13 @@ import { computed } from 'vue'
 
 const props = withDefaults(defineProps<{
   /**
-   * GitHub repo path: owner/repo/tree/branch/path
-   * e.g. 'YunYouJun/weixin-ts/tree/main/examples/basic'
+   * GitHub repo path: owner/repo or owner/repo/tree/branch
+   * e.g. 'YunYouJun/weixin-ts'
    */
   repo?: string
-  /** File to open by default */
+  /** File to open by default (relative to repo root) */
   file?: string
-  /** Terminal command to run on start */
+  /** Terminal script name to run on start (from root package.json) */
   startScript?: string
   /** Embed height */
   height?: string
@@ -18,9 +18,9 @@ const props = withDefaults(defineProps<{
   /** Title for the embed */
   title?: string
 }>(), {
-  repo: 'YunYouJun/weixin-ts/tree/main/examples/basic',
-  file: 'src/index.ts',
-  startScript: 'start',
+  repo: 'YunYouJun/weixin-ts',
+  file: 'examples/basic/src/index.ts',
+  startScript: 'example',
   height: '600px',
   terminal: true,
   title: 'Live Demo',
@@ -34,7 +34,8 @@ const iframeSrc = computed(() => {
     theme: 'dark',
   })
   if (props.terminal) {
-    params.set('terminal', props.startScript)
+    params.set('terminal', '1')
+    params.set('startScript', props.startScript)
   }
   return `https://stackblitz.com/github/${props.repo}?${params.toString()}`
 })
