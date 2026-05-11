@@ -31,3 +31,6 @@ docs/api
 # OS files
 Thumbs.db
 Desktop.ini
+
+# CodeBuddy
+.codebuddy

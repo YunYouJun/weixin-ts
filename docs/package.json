@@ -9,11 +9,13 @@
   "devDependencies": {
     "@iconify-json/svg-spinners": "catalog:",
     "@shikijs/vitepress-twoslash": "catalog:",
+    "@types/qrcode": "catalog:",
     "@unocss/reset": "catalog:",
     "@vueuse/core": "catalog:",
     "@yunyoujun/docs": "catalog:",
     "floating-vue": "catalog:",
     "pinia": "catalog:",
+    "qrcode": "catalog:",
     "unocss": "catalog:",
     "unplugin-vue-components": "catalog:",
     "vite-plugin-vue-devtools": "catalog:",

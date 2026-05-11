@@ -10,21 +10,31 @@ import typedocSidebar from '../../api/typedoc-sidebar.json'
 // English navigation
 // ---------------------------------------------------------------------------
 
-const GUIDES_EN: DefaultTheme.NavItemWithLink[] = [
+const GUIDES_EN = [
   { text: 'What is weixin-ts?', link: '/guide/what-is' },
   { text: 'Getting Started', link: '/guide/getting-started' },
+  { text: 'Examples', link: '/guide/examples' },
   { text: 'Configuration', link: '/guide/configuration' },
-]
+] satisfies DefaultTheme.SidebarItem[]
+
+const DESIGN_EN = [
+  { text: 'Design Principles', link: '/guide/design-principles' },
+] satisfies DefaultTheme.SidebarItem[]
 
 // ---------------------------------------------------------------------------
 // Chinese navigation
 // ---------------------------------------------------------------------------
 
-const GUIDES_ZH: DefaultTheme.NavItemWithLink[] = [
+const GUIDES_ZH = [
   { text: '什么是 weixin-ts?', link: '/zh/guide/what-is' },
   { text: '快速开始', link: '/zh/guide/getting-started' },
+  { text: '示例', link: '/zh/guide/examples' },
   { text: '配置', link: '/zh/guide/configuration' },
-]
+] satisfies DefaultTheme.SidebarItem[]
+
+const DESIGN_ZH = [
+  { text: '设计原则', link: '/zh/guide/design-principles' },
+] satisfies DefaultTheme.SidebarItem[]
 
 // ---------------------------------------------------------------------------
 // Shared
@@ -56,6 +66,18 @@ export default defineConfig({
   },
   cleanUrls: true,
 
+  vite: {
+    server: {
+      proxy: {
+        '/ilink': {
+          target: 'https://ilinkai.weixin.qq.com',
+          changeOrigin: true,
+          secure: true,
+        },
+      },
+    },
+  },
+
   // ---------------------------------------------------------------------------
   // i18n locales
   // ---------------------------------------------------------------------------
@@ -72,7 +94,10 @@ export default defineConfig({
         nav: [
           {
             text: '指南',
-            items: [{ items: GUIDES_ZH }],
+            items: [
+              { items: GUIDES_ZH },
+              { text: '设计', items: DESIGN_ZH },
+            ],
           },
           { text: '演示', link: '/zh/playground' },
           { text: 'API', link: '/api/' },
@@ -83,6 +108,10 @@ export default defineConfig({
             {
               text: '指南',
               items: GUIDES_ZH,
+            },
+            {
+              text: '设计',
+              items: DESIGN_ZH,
             },
           ],
           '/api/': typedocSidebar,
@@ -107,7 +136,10 @@ export default defineConfig({
     nav: [
       {
         text: 'Guide',
-        items: [{ items: GUIDES_EN }],
+        items: [
+          { items: GUIDES_EN },
+          { text: 'Design', items: DESIGN_EN },
+        ],
       },
       { text: 'Playground', link: '/playground' },
       { text: 'API', link: '/api/' },
@@ -118,6 +150,10 @@ export default defineConfig({
         {
           text: 'Guide',
           items: GUIDES_EN,
+        },
+        {
+          text: 'Design',
+          items: DESIGN_EN,
         },
       ],
       '/api/': typedocSidebar,

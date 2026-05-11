@@ -48,8 +48,9 @@ pnpm add @weixin-ts/bot
 
 ```typescript
 import { MessageItemType, WeixinBot } from '@weixin-ts/bot'
+import { fileSession } from '@weixin-ts/bot/node'
 
-const bot = new WeixinBot({ session: '.weixin-bot.session.json' })
+const bot = new WeixinBot({ session: fileSession('.weixin-bot.session.json') })
 
 // 扫码登录（或加载已保存的 session）
 const result = await bot.login({

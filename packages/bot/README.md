@@ -31,8 +31,9 @@ pnpm add @weixin-ts/bot
 
 ```ts
 import { MessageItemType, WeixinBot } from '@weixin-ts/bot'
+import { fileSession } from '@weixin-ts/bot/node'
 
-const bot = new WeixinBot({ session: '.weixin-bot.session.json' })
+const bot = new WeixinBot({ session: fileSession('.weixin-bot.session.json') })
 
 // 1. QR scan login (or load saved session)
 const result = await bot.login({

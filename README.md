@@ -4,17 +4,20 @@
 [![npm downloads][npm-downloads-src]][npm-downloads-href]
 [![License][license-src]][license-href]
 
+**English** | [简体中文](./README.zh-CN.md)
+
 Cross-platform, type-safe, zero-dependency WeChat Bot SDK for TypeScript.
 
-跨平台、类型安全、零依赖的微信 Bot TypeScript SDK。
-
-## 📚 Documentation | 文档
+## 📚 Documentation
 
 - English: https://weixin-ts.yunyoujun.cn
 - 中文: https://weixin-ts.yunyoujun.cn/zh/
+- API Reference: https://weixin-ts.yunyoujun.cn/api/
+- Examples: [examples](./examples)
+- Design Principles: https://weixin-ts.yunyoujun.cn/guide/design-principles
 - Mirror: https://weixin-ts.pages.dev
 
-## ✨ Features | 特性
+## ✨ Features
 
 - 🤖 **Bot SDK** — Event-driven bot with long-polling, message send/receive, typing indicators
 - 🌍 **Cross-Platform** — Node.js, Bun, Deno, Browser (Web standard APIs only)
@@ -30,7 +33,7 @@ Cross-platform, type-safe, zero-dependency WeChat Bot SDK for TypeScript.
 | [`@weixin-ts/bot`](./packages/bot) | [![bot version](https://img.shields.io/npm/v/@weixin-ts/bot?style=flat&colorA=080f12&colorB=07C160)](https://npmjs.com/package/@weixin-ts/bot) | Core Bot SDK — polling, messaging, events, login |
 | [`@weixin-ts/cdn`](./packages/cdn) | [![cdn version](https://img.shields.io/npm/v/@weixin-ts/cdn?style=flat&colorA=080f12&colorB=07C160)](https://npmjs.com/package/@weixin-ts/cdn) | CDN upload/download with AES-ECB encryption |
 
-## 🚀 Quick Start | 快速开始
+## 🚀 Quick Start
 
 ```bash
 pnpm add @weixin-ts/bot
@@ -38,8 +41,9 @@ pnpm add @weixin-ts/bot
 
 ```typescript
 import { MessageItemType, WeixinBot } from '@weixin-ts/bot'
+import { fileSession } from '@weixin-ts/bot/node'
 
-const bot = new WeixinBot({ session: '.weixin-bot.session.json' })
+const bot = new WeixinBot({ session: fileSession('.weixin-bot.session.json') })
 
 // QR scan login (or load saved session)
 const result = await bot.login({
@@ -73,6 +77,9 @@ await bot.start()
 - [`examples/basic`](./examples/basic) — Minimal echo bot with QR login
 - [`examples/commands`](./examples/commands) — Command-based bot (`/help`, `/ping`, `/echo`, `/id`)
 - [`examples/media`](./examples/media) — Media bot with `sendFile()` and `sendImage()`
+- [`examples/ai-chat`](./examples/ai-chat) — DeepSeek-powered chat bot with per-user context
+
+See [examples](./examples) for setup and run commands.
 
 ## [Sponsors](https://www.yunyoujun.cn/sponsors/)
 

@@ -40,7 +40,7 @@ const bot = new WeixinBot({
 | `version` | `string` | SDK 版本号 | 客户端版本 |
 | `longPollTimeoutMs` | `number` | `35000` | 长轮询超时 |
 | `apiTimeoutMs` | `number` | `15000` | 普通请求超时 |
-| `session` | `string` | — | Session 文件路径，用于自动保存/加载 Token |
+| `session` | `SessionStorage` | — | Session 存储后端。文件存储可从 `@weixin-ts/bot/node` 引入 `fileSession(path)`。 |
 
 ## 登录回调
 

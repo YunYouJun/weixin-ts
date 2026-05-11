@@ -9,6 +9,7 @@
     "example": "pnpm -C examples/basic run start",
     "example:commands": "pnpm -C examples/commands run start",
     "example:media": "pnpm -C examples/media run start",
+    "example:ai-chat": "pnpm -C examples/ai-chat run start",
     "lint": "eslint --cache .",
     "prepublishOnly": "nr build",
     "predocs": "typedoc",

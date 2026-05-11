@@ -1,4 +1,5 @@
 import type { GetUpdatesResp, WeixinMessage } from '../src/types'
+import { Buffer } from 'node:buffer'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { WeixinBot } from '../src/bot'
 import { MessageItemType, MessageType } from '../src/types'
@@ -7,6 +8,7 @@ import { MessageItemType, MessageType } from '../src/types'
 const mockFetch = vi.fn()
 
 beforeEach(() => {
+  mockFetch.mockReset()
   vi.stubGlobal('fetch', mockFetch)
 })
 
@@ -14,11 +16,19 @@ afterEach(() => {
   vi.restoreAllMocks()
 })
 
-function mockFetchResponse(body: unknown, status = 200) {
+function mockFetchResponse(body: unknown, status = 200, headers: Record<string, string> = {}) {
+  const normalizedHeaders = Object.fromEntries(
+    Object.entries(headers).map(([key, value]) => [key.toLowerCase(), value]),
+  )
+  const text = typeof body === 'string' ? body : JSON.stringify(body)
+
   return Promise.resolve({
     ok: status >= 200 && status < 300,
     status,
-    text: () => Promise.resolve(JSON.stringify(body)),
+    headers: {
+      get: (name: string) => normalizedHeaders[name.toLowerCase()] ?? null,
+    },
+    text: () => Promise.resolve(text),
     json: () => Promise.resolve(body),
   })
 }
@@ -68,6 +78,31 @@ describe('weixinBot', () => {
       expect(mockFetch).toHaveBeenCalled()
       const body = JSON.parse(mockFetch.mock.calls[0][1].body)
       expect(body.msg.context_token).toBe('ctx-abc')
+    })
+  })
+
+  describe('sendImage', () => {
+    it('should send media aes_key as base64-encoded hex string', async () => {
+      mockFetch
+        .mockReturnValueOnce(mockFetchResponse({ upload_param: 'upload-param' }))
+        .mockReturnValueOnce(mockFetchResponse('', 200, { 'x-encrypted-param': 'download-param' }))
+        .mockReturnValueOnce(mockFetchResponse({}))
+
+      const bot = new WeixinBot({ token: 'test-token' })
+      await bot.sendImage({
+        to: 'user123',
+        file: new TextEncoder().encode('hello image'),
+      })
+
+      expect(mockFetch).toHaveBeenCalledTimes(3)
+      const body = JSON.parse(mockFetch.mock.calls[2][1].body)
+      const imageItem = body.msg.item_list[0].image_item
+      const aesKeyHex = Buffer.from(imageItem.media.aes_key, 'base64').toString('utf8')
+
+      expect(imageItem.media.encrypt_query_param).toBe('download-param')
+      expect(aesKeyHex).toMatch(/^[\da-f]{32}$/)
+      expect(imageItem).not.toHaveProperty('aeskey')
+      expect(imageItem.mid_size).toBe(16)
     })
   })
 

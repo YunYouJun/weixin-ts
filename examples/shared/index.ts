@@ -8,6 +8,7 @@ import type { WeixinMessage } from '@weixin-ts/bot'
 import process from 'node:process'
 
 import { MessageItemType, WeixinBot } from '@weixin-ts/bot'
+import { fileSession } from '@weixin-ts/bot/node'
 import { consola } from 'consola'
 import { colors } from 'consola/utils'
 // @ts-expect-error qrcode-terminal has no bundled types
@@ -27,10 +28,20 @@ export interface CreateBotOptions {
 export function createBot(options?: CreateBotOptions): WeixinBot {
   const token = process.env.WEIXIN_BOT_TOKEN?.trim()
   const baseUrl = process.env.WEIXIN_BASE_URL?.trim()
+  const isDebug = !!process.env.WEIXIN_DEBUG
+  if (isDebug)
+    consola.level = 5
+
+  const debug = isDebug
+    ? (...args: unknown[]) => {
+        consola.debug(args.length === 1 ? args[0] : args)
+      }
+    : undefined
 
   return new WeixinBot({
-    ...(token ? { token } : { session: options?.session ?? '.weixin-bot.session.json' }),
+    ...(token ? { token } : { session: fileSession(options?.session ?? '.weixin-bot.session.json') }),
     ...(baseUrl ? { baseUrl } : {}),
+    debug,
   })
 }
 

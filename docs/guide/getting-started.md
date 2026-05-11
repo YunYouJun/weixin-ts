@@ -45,10 +45,11 @@ The simplest way to get a bot running — no pre-existing token needed:
 
 ```ts
 import { MessageItemType, WeixinBot } from '@weixin-ts/bot'
+import { fileSession } from '@weixin-ts/bot/node'
 
 const bot = new WeixinBot({
-  // Session persistence: auto-save token, skip QR on next run
-  session: '.weixin-bot.session.json',
+  // File session persistence: auto-save token, skip QR on next run
+  session: fileSession('.weixin-bot.session.json'),
 })
 
 // Login (loads saved session or triggers QR scan)

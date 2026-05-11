@@ -25,6 +25,7 @@
  */
 
 import type { LoginResult } from './auth/login'
+import type { SessionStorage } from './auth/session'
 import type {
   BotEventMap,
   CDNMedia,
@@ -36,13 +37,12 @@ import type {
   WeixinBotOptions,
   WeixinMessage,
 } from './types'
-import { fromHex, toBase64, uploadMedia } from '@weixin-ts/cdn'
+import { toBase64, uploadMedia } from '@weixin-ts/cdn'
 import { getConfig } from './api/get-config'
 import { getUpdates as getUpdatesApi } from './api/get-updates'
 import { sendMessage } from './api/send-message'
 import { sendTyping as sendTypingApi } from './api/send-typing'
 import { requestQRCode } from './auth/login'
-import { deleteSession, loadSession, saveSession } from './auth/session'
 import { DEFAULT_BASE_URL, DEFAULT_CDN_BASE_URL } from './constants'
 import { TypedEventEmitter } from './events'
 import { Poller } from './polling/poller'
@@ -72,6 +72,9 @@ export class WeixinBot extends TypedEventEmitter<BotEventMap> {
   private poller: Poller | null = null
   private readonly config: WeixinBotOptions
 
+  /** Resolved session storage (undefined = no persistence) */
+  private readonly _session: SessionStorage | undefined
+
   /** Mutable runtime state (token/baseUrl may change after login) */
   private _token: string | undefined
   private _baseUrl: string
@@ -86,6 +89,7 @@ export class WeixinBot extends TypedEventEmitter<BotEventMap> {
   constructor(options?: WeixinBotOptions) {
     super()
     this.config = { ...options }
+    this._session = options?.session
     this._token = options?.token
     this._baseUrl = options?.baseUrl ?? DEFAULT_BASE_URL
     this._cdnBaseUrl = options?.cdnBaseUrl ?? DEFAULT_CDN_BASE_URL
@@ -161,7 +165,9 @@ export class WeixinBot extends TypedEventEmitter<BotEventMap> {
    *
    * @example
    * ```ts
-   * const bot = new WeixinBot({ session: '.weixin-bot.session.json' })
+   * import { fileSession } from '@weixin-ts/bot/node'
+   *
+   * const bot = new WeixinBot({ session: fileSession('.weixin-bot.session.json') })
    *
    * await bot.login({
    *   onQrCode: (url) => console.log('Scan:', url),
@@ -173,8 +179,8 @@ export class WeixinBot extends TypedEventEmitter<BotEventMap> {
    */
   async login(callbacks?: LoginCallbacks): Promise<LoginResult> {
     // Try loading saved session first
-    if (this.config.session && !this._token) {
-      const saved = await loadSession(this.config.session)
+    if (this._session && !this._token) {
+      const saved = await this._session.load()
       if (saved) {
         this._token = saved.botToken
         if (saved.baseUrl) {
@@ -216,8 +222,8 @@ export class WeixinBot extends TypedEventEmitter<BotEventMap> {
       }
 
       // Persist session
-      if (this.config.session) {
-        await saveSession(this.config.session, {
+      if (this._session) {
+        await this._session.save({
           botToken: result.botToken,
           accountId: result.accountId,
           baseUrl: result.baseUrl,
@@ -340,19 +346,23 @@ export class WeixinBot extends TypedEventEmitter<BotEventMap> {
         version: this.config.version,
       },
       cdnBaseUrl: this._cdnBaseUrl,
+      debug: this.config.debug,
     })
 
     // Build media CDN reference
     const media: CDNMedia = {
       encrypt_query_param: uploaded.downloadParam,
-      aes_key: toBase64(fromHex(uploaded.aesKeyHex)),
+      aes_key: toBase64(new TextEncoder().encode(uploaded.aesKeyHex)),
       encrypt_type: 1,
     }
 
     // Build the message item based on type
     const mediaItem: MessageItem = { type: itemType }
     if (itemType === MessageItemType.IMAGE) {
-      mediaItem.image_item = { media, mid_size: uploaded.fileSizeCiphertext }
+      mediaItem.image_item = {
+        media,
+        mid_size: uploaded.fileSizeCiphertext,
+      }
     }
     else if (itemType === MessageItemType.VIDEO) {
       mediaItem.video_item = { media, video_size: uploaded.fileSizeCiphertext }
@@ -365,13 +375,31 @@ export class WeixinBot extends TypedEventEmitter<BotEventMap> {
       }
     }
 
-    // Assemble item list (optional text caption + media)
-    const itemList: MessageItem[] = []
+    // Send text caption as a separate message first (if provided).
+    // Mixing TEXT + media items in the same item_list causes the API
+    // to render the entire message as plain text.
     if (options.text) {
-      itemList.push({ type: MessageItemType.TEXT, text_item: { text: options.text } })
+      await sendMessage({
+        baseUrl: this._baseUrl,
+        token: this._token,
+        timeoutMs: this.config.apiTimeoutMs,
+        appId: this.config.appId,
+        version: this.config.version,
+        body: {
+          msg: {
+            from_user_id: '',
+            to_user_id: options.to,
+            client_id: generateId('weixin-bot'),
+            message_type: MessageType.BOT,
+            message_state: MessageState.FINISH,
+            item_list: [{ type: MessageItemType.TEXT, text_item: { text: options.text } }],
+            context_token: contextToken,
+          },
+        },
+      })
     }
-    itemList.push(mediaItem)
 
+    // Send the media message with only the media item
     await sendMessage({
       baseUrl: this._baseUrl,
       token: this._token,
@@ -385,7 +413,7 @@ export class WeixinBot extends TypedEventEmitter<BotEventMap> {
           client_id: clientId,
           message_type: MessageType.BOT,
           message_state: MessageState.FINISH,
-          item_list: itemList,
+          item_list: [mediaItem],
           context_token: contextToken,
         },
       },
@@ -486,8 +514,8 @@ export class WeixinBot extends TypedEventEmitter<BotEventMap> {
     this.contextTokens.clear()
     this.typingTickets.clear()
 
-    if (this.config.session) {
-      await deleteSession(this.config.session)
+    if (this._session) {
+      await this._session.delete()
     }
 
     this.emit('session:expired')

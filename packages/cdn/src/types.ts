@@ -5,11 +5,11 @@
  * @module
  */
 
-/** CDN media reference; `aes_key` is base64-encoded bytes in JSON. */
+/** CDN media reference; `aes_key` is base64-encoded in JSON. */
 export interface CDNMedia {
   /** Encrypted download parameter from CDN upload */
   encrypt_query_param?: string
-  /** AES key, base64-encoded */
+  /** AES key, usually base64-encoded hex string when sending */
   aes_key?: string
   /** Encryption type: 0 = encrypt fileid only, 1 = packed with thumbnail/mid info */
   encrypt_type?: number

@@ -6,6 +6,7 @@
     "moduleResolution": "Bundler",
     "paths": {
       "@weixin-ts/bot": ["./packages/bot/src/index.ts"],
+      "@weixin-ts/bot/node": ["./packages/bot/src/node.ts"],
       "@weixin-ts/cdn": ["./packages/cdn/src/index.ts"]
     },
     "resolveJsonModule": true,

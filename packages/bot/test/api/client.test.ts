@@ -1,5 +1,26 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { apiPost } from '../../src/api/client'
 import { buildClientVersion, buildCommonHeaders, buildPostHeaders } from '../../src/utils/headers'
+
+const mockFetch = vi.fn()
+
+beforeEach(() => {
+  mockFetch.mockReset()
+  vi.stubGlobal('fetch', mockFetch)
+})
+
+afterEach(() => {
+  vi.unstubAllGlobals()
+  vi.restoreAllMocks()
+})
+
+function mockResponse(text: string, status = 200): Response {
+  return {
+    ok: status >= 200 && status < 300,
+    status,
+    text: () => Promise.resolve(text),
+  } as unknown as Response
+}
 
 describe('headers', () => {
   describe('buildClientVersion', () => {
@@ -48,5 +69,49 @@ describe('headers', () => {
       const headers = buildPostHeaders('{}', {})
       expect(headers.Authorization).toBeUndefined()
     })
+  })
+})
+
+describe('apiPost', () => {
+  const baseParams = {
+    baseUrl: 'https://api.example.com',
+    endpoint: 'ilink/bot/test',
+    body: { hello: 'world' },
+    timeoutMs: 1000,
+  }
+
+  it('should parse JSON responses', async () => {
+    mockFetch.mockResolvedValueOnce(mockResponse('{"ok":true}'))
+
+    const result = await apiPost<{ ok: boolean }>(baseParams)
+
+    expect(result).toEqual({ ok: true })
+    expect(mockFetch).toHaveBeenCalledOnce()
+    expect(mockFetch.mock.calls[0][0]).toBe('https://api.example.com/ilink/bot/test')
+    expect(JSON.parse(mockFetch.mock.calls[0][1].body)).toEqual({ hello: 'world' })
+  })
+
+  it('should return an empty object for empty successful responses', async () => {
+    mockFetch.mockResolvedValueOnce(mockResponse(''))
+
+    const result = await apiPost<Record<string, never>>(baseParams)
+
+    expect(result).toEqual({})
+  })
+
+  it('should throw contextual errors for invalid JSON responses', async () => {
+    mockFetch.mockResolvedValueOnce(mockResponse('OK'))
+
+    await expect(apiPost(baseParams)).rejects.toThrow(
+      'API ilink/bot/test invalid JSON (status=200): OK',
+    )
+  })
+
+  it('should throw contextual errors for non-2xx responses', async () => {
+    mockFetch.mockResolvedValueOnce(mockResponse('bad request', 400))
+
+    await expect(apiPost(baseParams)).rejects.toThrow(
+      'API ilink/bot/test 400: bad request',
+    )
   })
 })

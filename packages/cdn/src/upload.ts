@@ -41,6 +41,8 @@ export interface UploadMediaOptions {
   }
   /** CDN base URL for upload */
   cdnBaseUrl: string
+  /** Optional debug logger for diagnosing CDN upload issues */
+  debug?: (...args: unknown[]) => void
 }
 
 const MEDIA_TYPE_MAP = {
@@ -105,6 +107,10 @@ export async function uploadMedia(options: UploadMediaOptions): Promise<Uploaded
     version: options.apiOptions.version,
   })
 
+  if (options.debug) {
+    options.debug('[cdn] getUploadUrl response:', JSON.stringify(uploadUrlResp, null, 2))
+  }
+
   const uploadFullUrl = uploadUrlResp.upload_full_url?.trim()
   const uploadParam = uploadUrlResp.upload_param
 
@@ -122,6 +128,8 @@ export async function uploadMedia(options: UploadMediaOptions): Promise<Uploaded
     uploadParam: uploadParam || undefined,
     filekey,
     cdnBaseUrl: options.cdnBaseUrl,
+    timeoutMs: options.apiOptions.timeoutMs,
+    debug: options.debug,
   })
 
   return {
@@ -192,7 +200,16 @@ async function requestUploadUrl(params: {
       throw new Error(`getUploadUrl ${res.status}: ${text}`)
     }
 
-    return await res.json() as UploadUrlResp
+    const text = await res.text()
+    if (!text.trim())
+      throw new Error(`getUploadUrl ${res.status}: empty response (url=${url.toString()})`)
+
+    try {
+      return JSON.parse(text) as UploadUrlResp
+    }
+    catch {
+      throw new Error(`getUploadUrl ${res.status}: invalid JSON response: ${text.slice(0, 200)} (url=${url.toString()})`)
+    }
   }
   catch (err) {
     clearTimeout(timer)
@@ -206,23 +223,90 @@ async function uploadToCdn(params: {
   uploadParam?: string
   filekey: string
   cdnBaseUrl: string
+  timeoutMs?: number
+  debug?: (...args: unknown[]) => void
 }): Promise<string> {
   const uploadUrl = params.uploadFullUrl
-    ?? `${params.cdnBaseUrl}/upload?upload_param=${encodeURIComponent(params.uploadParam ?? '')}`
+    ?? `${params.cdnBaseUrl}/upload?encrypted_query_param=${encodeURIComponent(params.uploadParam ?? '')}&filekey=${encodeURIComponent(params.filekey)}`
 
-  const res = await fetch(uploadUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/octet-stream',
-    },
-    body: params.ciphertext,
-  })
+  const controller = new AbortController()
+  const timeoutMs = params.timeoutMs ?? 30_000
+  const timer = setTimeout(() => controller.abort(), timeoutMs)
+
+  let res: Response
+  try {
+    res = await fetch(uploadUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/octet-stream',
+      },
+      body: params.ciphertext,
+      signal: controller.signal,
+    })
+    clearTimeout(timer)
+  }
+  catch (err) {
+    clearTimeout(timer)
+    if (err instanceof Error && err.name === 'AbortError') {
+      throw new Error(
+        `CDN upload timed out after ${timeoutMs}ms`
+        + ` (url=${uploadUrl.slice(0, 120)}… size=${params.ciphertext.length})`,
+      )
+    }
+    throw err
+  }
 
   if (!res.ok) {
     const text = await res.text()
-    throw new Error(`CDN upload failed ${res.status}: ${text}`)
+    const errHeader = res.headers.get('x-error-message') ?? ''
+    const detail = errHeader || text
+    throw new Error(
+      `CDN upload failed ${res.status}: ${detail}`
+      + ` (url=${uploadUrl.slice(0, 120)}… size=${params.ciphertext.length})`,
+    )
   }
 
-  const resp = await res.json() as { download_param?: string, encrypt_query_param?: string }
-  return resp.download_param ?? resp.encrypt_query_param ?? ''
+  const fallbackDownloadParam = res.headers.get('x-encrypted-param')
+    ?? res.headers.get('download_param')
+    ?? res.headers.get('encrypt_query_param')
+    ?? res.headers.get('x-download-param')
+    ?? res.headers.get('x-encrypt-query-param')
+
+  const text = await res.text()
+  let downloadParam: string | undefined
+
+  if (text.trim()) {
+    try {
+      const resp = JSON.parse(text) as { download_param?: string, encrypt_query_param?: string }
+      downloadParam = resp.download_param ?? resp.encrypt_query_param
+    }
+    catch {
+      // Non-JSON response body — rely on fallback
+    }
+  }
+
+  downloadParam ??= fallbackDownloadParam ?? undefined
+
+  if (params.debug) {
+    const headers: Record<string, string> = {}
+    res.headers.forEach((v, k) => {
+      headers[k] = v
+    })
+    params.debug('[cdn] uploadToCdn response:', {
+      status: res.status,
+      headers,
+      body: text.slice(0, 500),
+      resolvedDownloadParam: downloadParam?.slice(0, 80),
+      fallbackSource: downloadParam === fallbackDownloadParam ? 'fallback' : 'body',
+    })
+  }
+
+  if (!downloadParam) {
+    throw new Error(
+      `CDN upload succeeded (${res.status}) but returned no download_param`
+      + ` (url=${uploadUrl.slice(0, 120)}… size=${params.ciphertext.length})`,
+    )
+  }
+
+  return downloadParam
 }

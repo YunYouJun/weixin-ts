@@ -6,6 +6,18 @@
 这是一个**在线编辑器** — 你可以修改代码并实时查看效果。右侧终端显示 Bot 输出。
 :::
 
+## 浏览器 API 演示
+
+扫码后启动长轮询，接收新消息，并在浏览器聊天界面中回复。
+
+::: warning
+`ilinkai.weixin.qq.com` 未提供浏览器所需的 CORS 响应头。该演示仅在本地开发环境渲染，并通过 VitePress dev server 代理访问接口（`/ilink -> https://ilinkai.weixin.qq.com`）。静态生产部署需要自行提供后端、边缘函数或网关代理。
+:::
+
+<ClientOnly>
+  <SendTextDemo />
+</ClientOnly>
+
 ## Echo Bot 示例
 
 <StackBlitzEmbed
@@ -21,6 +33,7 @@
 - [`examples/basic`](https://github.com/YunYouJun/weixin-ts/tree/main/examples/basic) — 最小 Echo Bot + 扫码登录
 - [`examples/commands`](https://github.com/YunYouJun/weixin-ts/tree/main/examples/commands) — 命令式 Bot（`/help`、`/ping`、`/echo`、`/id`）
 - [`examples/media`](https://github.com/YunYouJun/weixin-ts/tree/main/examples/media) — 媒体 Bot，演示 `sendFile()` 与 `sendImage()`
+- [`examples/ai-chat`](https://github.com/YunYouJun/weixin-ts/tree/main/examples/ai-chat) — 接入 DeepSeek 的多轮对话 Bot
 
 ## 运行流程
 

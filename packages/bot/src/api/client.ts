@@ -72,7 +72,15 @@ export async function apiPost<T>(params: {
     if (!res.ok) {
       throw new Error(`API ${params.endpoint} ${res.status}: ${text}`)
     }
-    return JSON.parse(text) as T
+    if (!text)
+      return {} as T
+
+    try {
+      return JSON.parse(text) as T
+    }
+    catch {
+      throw new Error(`API ${params.endpoint} invalid JSON (status=${res.status}): ${text.slice(0, 200)}`)
+    }
   }
   catch (err) {
     clearTimeout(timer)

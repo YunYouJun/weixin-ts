@@ -20,6 +20,18 @@ export interface DownloadMediaOptions {
 
 const DEFAULT_CDN_BASE_URL = 'https://novac2c.cdn.weixin.qq.com/c2c'
 
+function parseAesKey(aesKeyBase64: string): Uint8Array {
+  const decoded = fromBase64(aesKeyBase64)
+  if (decoded.length === 16)
+    return decoded
+
+  const hex = String.fromCharCode(...decoded)
+  if (decoded.length === 32 && /^[\da-f]{32}$/i.test(hex))
+    return fromHex(hex)
+
+  throw new Error(`Invalid AES key: expected 16 raw bytes or 32-character hex string, got ${decoded.length} bytes`)
+}
+
 /**
  * Download and decrypt a media file from the WeChat CDN.
  *
@@ -67,7 +79,7 @@ export async function downloadMedia(options: DownloadMediaOptions): Promise<Uint
     aesKey = fromHex(options.aesKeyHex)
   }
   else if (media.aes_key) {
-    aesKey = fromBase64(media.aes_key)
+    aesKey = parseAesKey(media.aes_key)
   }
   else {
     throw new Error('No AES key available for decryption')

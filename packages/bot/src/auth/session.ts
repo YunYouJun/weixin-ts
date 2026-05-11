@@ -1,13 +1,13 @@
 /**
- * Session persistence for token storage.
+ * Session persistence primitives.
  *
- * Uses dynamic import of `node:fs/promises` to keep the module cross-platform.
- * In non-Node environments (browser/Deno), persistence is silently skipped.
+ * This module is runtime-agnostic and does not import any Node.js API.
+ * Use `@weixin-ts/bot/node` for the built-in file-based session storage.
  *
  * @module
  */
 
-/** Session data stored to disk */
+/** Session data persisted between bot restarts. */
 export interface SessionData {
   botToken: string
   accountId?: string
@@ -17,57 +17,35 @@ export interface SessionData {
 }
 
 /**
- * Load session data from a file path.
- * Returns null if file doesn't exist or can't be read.
+ * Runtime-agnostic session storage interface.
+ *
+ * Implement this for localStorage, IndexedDB, Redis, files, KV stores, etc.
+ *
+ * @example
+ * ```ts
+ * import type { SessionStorage } from '@weixin-ts/bot'
+ *
+ * const storage: SessionStorage = {
+ *   async load() {
+ *     const raw = localStorage.getItem('weixin-session')
+ *     return raw ? JSON.parse(raw) : null
+ *   },
+ *   async save(data) {
+ *     localStorage.setItem('weixin-session', JSON.stringify(data))
+ *   },
+ *   async delete() {
+ *     const had = localStorage.getItem('weixin-session') !== null
+ *     localStorage.removeItem('weixin-session')
+ *     return had
+ *   },
+ * }
+ * ```
  */
-export async function loadSession(filePath: string): Promise<SessionData | null> {
-  try {
-    const fs = await import('node:fs/promises')
-    const raw = await fs.readFile(filePath, 'utf-8')
-    const data = JSON.parse(raw) as SessionData
-    if (data.botToken)
-      return data
-    return null
-  }
-  catch {
-    return null
-  }
-}
-
-/**
- * Save session data to a file path.
- * Sets file permissions to 0600 (owner-only) for security.
- */
-export async function saveSession(filePath: string, data: SessionData): Promise<void> {
-  try {
-    const fs = await import('node:fs/promises')
-    const path = await import('node:path')
-    const dir = path.dirname(filePath)
-    await fs.mkdir(dir, { recursive: true })
-    await fs.writeFile(filePath, JSON.stringify(data, null, 2))
-    try {
-      await fs.chmod(filePath, 0o600)
-    }
-    catch {
-      // chmod not supported on all platforms
-    }
-  }
-  catch {
-    // Silently skip if fs is unavailable (browser env)
-  }
-}
-
-/**
- * Delete session data from a file path.
- * Returns true when a file was deleted, false when it didn't exist or couldn't be removed.
- */
-export async function deleteSession(filePath: string): Promise<boolean> {
-  try {
-    const fs = await import('node:fs/promises')
-    await fs.unlink(filePath)
-    return true
-  }
-  catch {
-    return false
-  }
+export interface SessionStorage {
+  /** Load saved session data. Return `null` if nothing is stored. */
+  load: () => Promise<SessionData | null>
+  /** Save session data. */
+  save: (data: SessionData) => Promise<void>
+  /** Delete session data. Return `true` if something was deleted. */
+  delete: () => Promise<boolean>
 }

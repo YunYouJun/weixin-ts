@@ -1,4 +1,4 @@
-import type { SessionData } from './auth/session'
+import type { SessionData, SessionStorage } from './auth/session'
 
 /**
  * WeChat Bot protocol types.
@@ -65,11 +65,11 @@ export interface BaseInfo {
   channel_version?: string
 }
 
-/** CDN media reference; `aes_key` is base64-encoded bytes in JSON. */
+/** CDN media reference; `aes_key` is base64-encoded in JSON. */
 export interface CDNMedia {
   /** Encrypted download parameter from CDN upload */
   encrypt_query_param?: string
-  /** AES key, base64-encoded */
+  /** AES key, usually base64-encoded hex string when sending */
   aes_key?: string
   /** Encryption type: 0 = encrypt fileid only, 1 = packed with thumbnail/mid info */
   encrypt_type?: number
@@ -272,17 +272,36 @@ export interface WeixinBotOptions {
   /** Regular API timeout in ms @default 15000 */
   apiTimeoutMs?: number
   /**
-   * Session file path for token persistence.
+   * Session persistence storage.
+   *
+   * The main package is runtime-agnostic and only accepts a {@link SessionStorage}
+   * object. For file-based storage in Node.js, import `fileSession` from
+   * `@weixin-ts/bot/node`.
+   *
    * When set, token is automatically saved after login and loaded on next start.
-   * Avoids repeated QR scanning across restarts.
-   * The file is automatically deleted when the server reports the session is expired.
+   * The session is automatically deleted when the server reports expiry.
    *
    * @example
    * ```ts
-   * const bot = new WeixinBot({ session: '.weixin-bot.session.json' })
+   * import { WeixinBot } from '@weixin-ts/bot'
+   * import { fileSession } from '@weixin-ts/bot/node'
+   *
+   * const bot = new WeixinBot({
+   *   session: fileSession('.weixin-bot.session.json'),
+   * })
    * ```
    */
-  session?: string
+  session?: SessionStorage
+  /**
+   * Optional debug logger for diagnosing CDN upload and internal operations.
+   * When set, detailed upload request/response info is logged via this callback.
+   *
+   * @example
+   * ```ts
+   * const bot = new WeixinBot({ debug: console.debug })
+   * ```
+   */
+  debug?: (...args: unknown[]) => void
 }
 
 /** Options for sending a text message */

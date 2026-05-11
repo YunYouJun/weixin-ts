@@ -6,6 +6,18 @@ Try the WeChat Bot SDK directly in your browser. The example below runs in a rea
 This is a **live editor** — you can modify the code and see changes in real time. The terminal on the right shows the bot output.
 :::
 
+## Browser API Demo
+
+Scan a QR code to start long polling, receive new messages, and reply from a browser chat UI.
+
+::: warning
+`ilinkai.weixin.qq.com` does not expose the CORS headers required by browsers. This demo is rendered only during local development and uses the VitePress dev server proxy (`/ilink -> https://ilinkai.weixin.qq.com`). Static production deployments need their own backend, edge function, or gateway proxy.
+:::
+
+<ClientOnly>
+  <SendTextDemo />
+</ClientOnly>
+
 ## Echo Bot Example
 
 <StackBlitzEmbed
@@ -21,6 +33,7 @@ This is a **live editor** — you can modify the code and see changes in real ti
 - [`examples/basic`](https://github.com/YunYouJun/weixin-ts/tree/main/examples/basic) — Minimal echo bot with QR login
 - [`examples/commands`](https://github.com/YunYouJun/weixin-ts/tree/main/examples/commands) — Command-based bot (`/help`, `/ping`, `/echo`, `/id`)
 - [`examples/media`](https://github.com/YunYouJun/weixin-ts/tree/main/examples/media) — Media bot with `sendFile()` and `sendImage()`
+- [`examples/ai-chat`](https://github.com/YunYouJun/weixin-ts/tree/main/examples/ai-chat) — DeepSeek-powered chat bot with per-user context
 
 ## What's Happening
 

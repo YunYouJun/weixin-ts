@@ -65,5 +65,7 @@ await bot.start()
 ## Next Steps
 
 - [Getting Started](/guide/getting-started) — Install and set up
+- [Examples](/guide/examples) — Run and explore demos
 - [Configuration](/guide/configuration) — Customize behavior
+- [Design Principles](/guide/design-principles) — Why it's built this way
 - [API Reference](/api/) — Full API documentation

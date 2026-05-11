@@ -1,135 +1,83 @@
 # Configuration
 
-## Build Configuration
+## WeixinBot Options
 
-The project uses `unbuild` as the build tool. Configuration is located in each package's `build.config.ts`.
+```ts
+import { WeixinBot } from '@weixin-ts/bot'
 
-### Default Configuration
+const bot = new WeixinBot({
+  // Bot token (can be obtained via login())
+  token: 'YOUR_TOKEN',
 
-```typescript
-import { defineBuildConfig } from 'unbuild'
+  // API base URL (usually no need to change)
+  baseUrl: 'https://ilinkai.weixin.qq.com',
 
-export default defineBuildConfig({
-  entries: ['src/index'],
-  declaration: true,
-  clean: true,
-  rollup: {
-    emitCJS: false,
-  },
+  // CDN base URL (media upload/download)
+  cdnBaseUrl: 'https://novac2c.cdn.weixin.qq.com/c2c',
+
+  // iLink App ID
+  appId: 'bot',
+
+  // Client version
+  version: '1.0.0',
+
+  // Long-poll timeout (ms)
+  longPollTimeoutMs: 35000,
+
+  // Normal API request timeout (ms)
+  apiTimeoutMs: 15000,
 })
 ```
 
-### Configuration Options
+## Options Reference
 
-- `entries`: Entry point files
-- `declaration`: Generate TypeScript declaration files
-- `clean`: Clean output directory before build
-- `rollup`: Rollup-specific options
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `token` | `string` | — | Bot token (can be obtained via `login()`) |
+| `baseUrl` | `string` | `https://ilinkai.weixin.qq.com` | API base URL |
+| `cdnBaseUrl` | `string` | `https://novac2c.cdn.weixin.qq.com/c2c` | CDN base URL |
+| `appId` | `string` | `'bot'` | iLink App ID |
+| `version` | `string` | SDK version | Client version |
+| `longPollTimeoutMs` | `number` | `35000` | Long-poll timeout |
+| `apiTimeoutMs` | `number` | `15000` | Normal request timeout |
+| `session` | `SessionStorage` | — | Session storage backend. Use `fileSession(path)` from `@weixin-ts/bot/node` for file storage. |
 
-## TypeScript Configuration
+## Login Callbacks
 
-TypeScript configuration is in `tsconfig.json`:
+```ts
+const result = await bot.login({
+  // Called when QR code is ready; display the URL wherever you like
+  onQrCode: url => console.log('Scan:', url),
 
-```json
-{
-  "compilerOptions": {
-    "target": "ES2020",
-    "module": "ESNext",
-    "moduleResolution": "bundler",
-    "strict": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true
-  }
-}
-```
+  // User scanned, waiting for confirmation in WeChat
+  onScanned: () => console.log('Confirm in WeChat...'),
 
-## ESLint Configuration
-
-The project uses `@antfu/eslint-config`. Configuration is in `eslint.config.js`:
-
-```javascript
-import antfu from '@antfu/eslint-config'
-
-export default antfu({
-  // Your custom config
+  // QR code expired and auto-refreshed
+  onQrRefresh: url => console.log('QR refreshed:', url),
 })
+
+if (!result.success)
+  throw new Error(result.message)
 ```
 
-## Package Manager Configuration
+For more control over login timeout, polling interval, or bot type, use the low-level `requestQRCode()`.
 
-Using pnpm workspaces, configured in `pnpm-workspace.yaml`:
+## Events
 
-```yaml
-packages:
-  - playground
-  - docs
-  - packages/*
-  - examples/*
-```
+| Event | Payload | Description |
+|-------|---------|-------------|
+| `message` | `WeixinMessage` | New message received |
+| `error` | `Error` | Polling error (non-fatal, auto-retries) |
+| `connected` | — | Polling started |
+| `disconnected` | — | Polling stopped |
+| `session:expired` | — | Session expired (errcode -14); local session file is deleted automatically when `session` is configured |
 
-## Git Hooks
+## Message Types
 
-Using `simple-git-hooks` and `lint-staged` for pre-commit checks:
-
-```json
-{
-  "simple-git-hooks": {
-    "pre-commit": "pnpm lint-staged"
-  },
-  "lint-staged": {
-    "*": "eslint --fix"
-  }
-}
-```
-
-## Documentation Configuration
-
-### VitePress Configuration
-
-Documentation is built with VitePress. Configuration is in `docs/.vitepress/config/index.ts`.
-
-### TypeDoc Configuration
-
-API documentation is generated with TypeDoc. Configuration is in `typedoc.json`:
-
-```json
-{
-  "$schema": "https://typedoc.org/schema.json",
-  "entryPoints": ["./packages/bot/src/index.ts", "./packages/cdn/src/index.ts"],
-  "out": "./docs/api",
-  "plugin": ["typedoc-plugin-markdown", "typedoc-vitepress-theme"],
-  "readme": "none",
-  "docsRoot": "docs",
-  "gitRevision": "main",
-  "sourceLinkTemplate": "https://github.com/YunYouJun/weixin-ts/tree/{gitRevision}/{path}#L{line}",
-  "sidebar": {
-    "autoConfiguration": true,
-    "format": "vitepress",
-    "pretty": true,
-    "collapsed": false
-  }
-}
-```
-
-### Customizing Docs
-
-To add more packages to API documentation, update `typedoc.json`:
-
-```json
-{
-  "entryPoints": [
-    "./packages/bot/src/index.ts",
-    "./packages/cdn/src/index.ts",
-    "./packages/another-package/src/index.ts"
-  ]
-}
-```
-
-## Environment Variables
-
-No environment variables are required for basic usage. For deployment, see deployment configuration.
-
-## Next Steps
-
-- Read the [Getting Started Guide](/guide/getting-started)
-- Explore [API Reference](/api/)
+| Type | Value | Constant |
+|------|-------|----------|
+| Text | `1` | `MessageItemType.TEXT` |
+| Image | `2` | `MessageItemType.IMAGE` |
+| Voice | `3` | `MessageItemType.VOICE` |
+| File | `4` | `MessageItemType.FILE` |
+| Video | `5` | `MessageItemType.VIDEO` |

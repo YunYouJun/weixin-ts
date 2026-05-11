@@ -31,8 +31,7 @@ export type {
   QRLoginOptions,
   QRPollCallbacks,
 } from './auth/login'
-export { deleteSession, loadSession, saveSession } from './auth/session'
-export type { SessionData } from './auth/session'
+export type { SessionData, SessionStorage } from './auth/session'
 
 // Main class
 export { WeixinBot } from './bot'

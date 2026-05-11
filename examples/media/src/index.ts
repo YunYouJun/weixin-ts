@@ -19,6 +19,21 @@ const HELP_TEXT = [
   '/image <url> - Download an image URL and send it back',
 ].join('\n')
 
+function normalizeHttpUrl(input: string): string {
+  let url: URL
+  try {
+    url = new URL(input)
+  }
+  catch {
+    throw new Error('Invalid URL, please pass a full http(s) link.')
+  }
+
+  if (url.protocol !== 'http:' && url.protocol !== 'https:')
+    throw new Error('Invalid URL, please pass a full http(s) link.')
+
+  return url.toString()
+}
+
 async function fetchBinary(url: string): Promise<Uint8Array> {
   const res = await fetch(url)
   if (!res.ok)
@@ -35,21 +50,36 @@ async function sendGeneratedFile(to: string): Promise<void> {
     'This file was sent with bot.sendFile().',
   ].join('\n')
 
+  consola.start('Uploading file to CDN...')
   await bot.sendFile({
     to,
     file: new TextEncoder().encode(content),
     fileName: 'weixin-ts-demo.txt',
-    text: 'Here is a generated text file.',
   })
+  consola.success('File sent!')
 }
 
 async function sendImageFromUrl(to: string, url: string): Promise<void> {
-  const image = await fetchBinary(url)
+  const imageUrl = normalizeHttpUrl(url)
+  consola.start(`Downloading image: ${colors.cyan(imageUrl)}`)
+  const image = await fetchBinary(imageUrl)
+  consola.start(`Downloaded ${image.length} bytes, uploading to CDN...`)
   await bot.sendImage({
     to,
     file: image,
-    text: `Image from ${url}`,
   })
+  consola.success('Image sent!')
+}
+
+function getMediaErrorHint(message: string): string | undefined {
+  if (message.includes('Unexpected end of JSON input'))
+    return 'Hint: rebuild packages with pnpm -r build; this usually means old dist code parsed an empty CDN/API response as JSON.'
+
+  if (message.includes('timed out'))
+    return 'Hint: CDN upload timed out. Check network connectivity to the CDN endpoint.'
+
+  if (message.includes('getUploadUrl') || message.includes('CDN upload'))
+    return 'Hint: check WEIXIN_BASE_URL, WEIXIN_BOT_TOKEN, and CDN network reachability.'
 }
 
 async function handleCommand(from: string, text: string): Promise<void> {
@@ -117,8 +147,15 @@ async function main(): Promise<void> {
     }
     catch (err) {
       const message = err instanceof Error ? err.message : String(err)
+      const hint = getMediaErrorHint(message)
       consola.error(message)
-      await bot.sendText({ to: from, text: `Media command failed: ${message}` })
+      if (hint)
+        consola.info(colors.gray(hint))
+
+      await bot.sendText({
+        to: from,
+        text: `Media command failed: ${message}${hint ? `\n${hint}` : ''}`,
+      })
       await bot.sendTyping(from, TypingStatus.CANCEL)
     }
   })

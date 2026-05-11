@@ -45,10 +45,11 @@ pnpm add @weixin-ts/cdn
 
 ```ts
 import { MessageItemType, WeixinBot } from '@weixin-ts/bot'
+import { fileSession } from '@weixin-ts/bot/node'
 
 const bot = new WeixinBot({
-  // Session 持久化：首次扫码后保存，下次启动自动加载
-  session: '.weixin-bot.session.json',
+  // 文件 Session 持久化：首次扫码后保存，下次启动自动加载
+  session: fileSession('.weixin-bot.session.json'),
 })
 
 // 登录（有 session 自动加载，否则扫码）
